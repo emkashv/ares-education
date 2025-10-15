@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Ares Education</title>
+  <meta name="description" content="Космический сайт с эффектами будущего" />
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <style>
+    :root{
+      --bg:#05030a;
+      --accent: linear-gradient(90deg,#6ee7ff,#9b7cff,#ff6bd6);
+      --card: rgba(255,255,255,0.03);
+      --glass-border: rgba(255,255,255,0.06);
+      --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Inter', Arial, sans-serif;
+    }
+    *{box-sizing:border-box;}
+    html, body{height:100%;}
+    body{
+      margin:0;
+      font-family:var(--font-sans);
+      background: radial-gradient(ellipse at 10% 10%, #0b0a13 0%, transparent 30%), radial-gradient(ellipse at 90% 90%, #081223 0%, transparent 30%), var(--bg);
+      color:#e9eefc;
+      -webkit-font-smoothing:antialiased;
+      overflow-x:hidden;
+      perspective:1200px;
+    }
+
+    #starfield{position:fixed;inset:0;z-index:0;pointer-events:none;}
+
+    header{
+      position:fixed;left:0;right:0;top:0;z-index:30;padding:18px 28px;
+      display:flex;align-items:center;justify-content:space-between;
+      backdrop-filter: blur(6px) saturate(1.2);
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-bottom:1px solid var(--glass-border);
+    }
+    .brand{color:#fff;font-weight:700;}
+    .burger{width:52px;height:42px;background:transparent;border-radius:10px;border:1px solid var(--glass-border);display:grid;place-items:center;cursor:pointer;}
+    .burger .lines{width:26px;height:18px;position:relative;}
+    .burger span{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,#fff,#9be7ff);border-radius:2px;transition:transform .4s cubic-bezier(.2,.8,.2,1),opacity .2s;}
+    .burger span:nth-child(1){top:0;}
+    .burger span:nth-child(2){top:8px;}
+    .burger span:nth-child(3){top:16px;}
+
+    .menu-overlay{position:fixed;inset:0;background:linear-gradient(180deg,rgba(4,8,20,0.9),rgba(3,6,12,0.95));z-index:40;display:none;align-items:center;justify-content:center;}
+    .menu{
+      width:min(680px,90%);
+      padding:48px;
+      border-radius:16px;
+      background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));
+      box-shadow:0 30px 120px rgba(124,46,255,0.06);
+      backdrop-filter:blur(14px);
+    }
+    .menu a{
+      display:block;
+      font-size:22px;
+      padding:14px 0;
+      font-weight:800;
+      color:#eaf6ff;
+      text-decoration:none;
+      transition:color .3s, text-shadow .3s;
+    }
+    .menu a:hover{
+      color:#fff;
+      text-shadow:0 0 15px rgba(255,255,255,0.8);
+    }
+
+    main{position:relative;z-index:10;}
+    .section{min-height:100vh;padding:120px 6vw;display:grid;align-items:center;}
+    .hero{display:grid;grid-template-columns:1fr 520px;gap:40px;}
+    .hero-left{max-width:760px;}
+    .kicker{display:inline-block;padding:8px 12px;border-radius:8px;background:linear-gradient(90deg,#0b8499,#703bff);font-weight:700;color:#041025;}
+    .title{font-size:clamp(36px,6vw,80px);line-height:.95;margin:20px 0;font-weight:800;color:#e9eefc;}
+    .lead{font-size:18px;opacity:.85;max-width:56ch;}
+    .cta{margin-top:26px;display:flex;gap:14px;align-items:center;}
+    .btn{padding:12px 20px;border-radius:12px;font-weight:700;border:0;cursor:pointer;background:var(--accent);box-shadow:0 12px 30px rgba(107,77,255,0.12);}
+
+    .space-card{
+      height:420px;
+      border-radius:18px;
+      background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));
+      border:1px solid var(--glass-border);
+      box-shadow:0 40px 80px rgba(3,6,12,0.6);
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      overflow:hidden;
+      position:relative;
+    }
+    .planet{
+      width:100%;
+      height:100%;
+      background:url('https://takeielts.britishcouncil.org/sites/default/files/630xx353_lesson_plans_speaking.png') center/cover no-repeat;
+      border-radius:16px;
+      box-shadow:0 20px 50px rgba(124,46,255,0.08);
+      position:relative;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: clamp(36px,6vw,60px);
+      margin: 100px auto;
+      color: #fff;
+      font-weight: 800;
+      background: var(--accent);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .scroll-text {
+      margin: 60px 0;
+      text-align: center;
+      line-height: 1.2;
+      user-select: none;
+      z-index: 12;
+      position: relative;
+    }
+    .scroll-text .line {
+      display:block;
+      font-size: clamp(28px,5vw,40px);
+      font-weight: 700;
+      margin: 10px 0;
+      color: #aaaaaa; 
+      letter-spacing: .04em;
+    }
+    .scroll-text .letter {
+      display:inline-block;
+      color: #5b5b5b;
+      will-change: color, transform, text-shadow;
+      transform-origin: center center;
+    }
+
+    /* ---------------- Курсы ---------------- */
+    .courses {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 24px;
+      margin-top: 40px;
+    }
+    .course-card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(124,46,255,0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding-bottom: 20px;
+    }
+    .course-card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 30px 80px rgba(124,46,255,0.25);
+    }
+    .course-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+    .course-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin: 16px 0 8px;
+      color: #fff;
+    }
+    .course-price {
+      font-size: 18px;
+      font-weight: 600;
+      color: #9be7ff;
+    }
+
+    footer{padding:36px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--glass-border);margin-top:40px;}
+
+    @media (max-width:980px){
+      .hero{grid-template-columns:1fr;}
+      .title{font-size:clamp(28px,7vw,60px);}
+      .scroll-text .line{font-size: clamp(22px,6vw,32px);}
+    }
+  </style>
+</head>
+<body>
+<canvas id="starfield"></canvas>
+
+<header>
+  <div class="brand">Ares AI</div>
+  <button class="burger" id="burger" aria-label="Открыть меню">
+    <div class="lines"><span></span><span></span><span></span></div>
+  </button>
+</header>
+
+<div class="menu-overlay" id="menuOverlay" aria-hidden="true">
+  <div class="menu" role="dialog" aria-modal="true">
+    <a href="#home">Главная</a>
+    <a href="#features">Фишки</a>
+    <a href="#projects">Проекты</a>
+    <a href="#contact">Контакты</a>
+  </div>
+</div>
+
+<main>
+  <!-- HERO -->
+  <section class="section hero" id="home">
+    <div class="hero-left">
+      <div class="kicker">BETA версия</div>
+      <h2 class="title">Ares AI - Лучший помощник для поступления в иностранные ВУЗы</h2>
+      <p class="lead">ИИ, помогающий студентам сдать SAT, IELTS, TOEFL. Понятно, легко, быстро.</p>
+      <div class="cta"><button class="btn" id="explore">Исследовать</button></div>
+    </div>
+    <div class="space-card" id="spaceCard">
+      <div class="planet" id="planet"></div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="section">
+    <h1><strong>Про Ares Education</strong></h1>
+    <div class="scroll-text">
+      <div class="line">Ares Education - международная онлайн школа для подготовки в иностранные ВУЗы. Более 50+ студентов уже учатся в США, Германии, Великобритании и других странах. Инновационный метод обучения - Ares AI. Путь к успеху - всего 4.99$.</div>
+    </div>
+  </section>
+
+  <!-- COURSES -->
+  <section class="section">
+    <h1><strong>Курсы</strong></h1>
+    <div class="courses">
+      <div class="course-card">
+        <img src="https://via.placeholder.com/400x180" alt="SAT">
+        <div class="course-title">SAT</div>
+        <div class="course-price">8 уроков - $49.99</div>
+      </div>
+      <div class="course-card">
+        <img src="https://via.placeholder.com/400x180" alt="IELTS">
+        <div class="course-title">IELTS</div>
+        <div class="course-price">8 уроков - $49.99</div>
+      </div>
+      <div class="course-card">
+        <img src="https://via.placeholder.com/400x180" alt="TOEFL">
+        <div class="course-title">TOEFL</div>
+        <div class="course-price">8 уроков - $49.99</div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer><div>© CosmoFuture 2128</div></footer>
+
+<script>
+/* ---------------- Starfield ---------------- */
+const canvas = document.getElementById('starfield');
+const ctx = canvas.getContext('2d');
+let w = canvas.width = innerWidth, h = canvas.height = innerHeight;
+window.addEventListener('resize', ()=>{ w = canvas.width = innerWidth; h = canvas.height = innerHeight; initStars(); });
+let stars = [];
+function initStars(){
+  stars = [];
+  const count = Math.floor((w + h) / 20);
+  for(let i=0;i<count;i++){
+    stars.push({ x: Math.random()*w, y: Math.random()*h, z: Math.random()*1.5+0.2, r: Math.random()*1.2+0.2, dx: (Math.random()-0.5)*0.2 });
+  }
+}
+function renderStars(){
+  ctx.clearRect(0,0,w,h);
+  for(const s of stars){
+    s.x += s.dx;
+    if(s.x < 0) s.x = w; if(s.x > w) s.x = 0;
+    const size = s.r * (1 + Math.sin(Date.now()/1000 + s.x*0.01)*0.6);
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, size, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(174,223,255,' + (0.2 + s.z*0.4) + ')';
+    ctx.fill();
+  }
+  requestAnimationFrame(renderStars);
+}
+initStars(); renderStars();
+
+/* ---------------- GSAP ---------------- */
+gsap.registerPlugin(ScrollTrigger);
+
+const planet = document.getElementById('planet');
+gsap.to(planet, {
+  x: 150,
+  ease: "none",
+  scrollTrigger: {
+    trigger: "#home",
+    start: "top top",
+    end: "bottom top",
+    scrub: 2.0
+  }
+});
+
+/* ---------------- Burger Menu ---------------- */
+const burger = document.getElementById('burger');
+const menuOverlay = document.getElementById('menuOverlay');
+let menuOpen = false;
+function openMenu(){
+  menuOverlay.style.display = 'flex';
+  gsap.fromTo(menuOverlay, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.45 });
+  gsap.fromTo('.menu', { scale: 0.86, filter:'blur(6px) brightness(0.8)' }, { scale:1, filter:'blur(0px) brightness(1)', duration:0.6, ease:'power3.out' });
+  gsap.from('.menu a', { y:22, opacity:0, duration:0.6, ease:'power3.out', stagger:0.06 });
+  gsap.to(burger.querySelectorAll('span'), { background:'#fff' });
+  gsap.to(burger.querySelector('span:nth-child(1)'), { y:8, rotation:45, duration:0.45 });
+  gsap.to(burger.querySelector('span:nth-child(2)'), { opacity:0, duration:0.25 });
+  gsap.to(burger.querySelector('span:nth-child(3)'), { y:-8, rotation:-45, duration:0.45 });
+  menuOpen = true;
+}
+function closeMenu(){
+  gsap.to(menuOverlay, { autoAlpha: 0, duration: 0.35, onComplete: ()=> { menuOverlay.style.display = 'none'; }});
+  gsap.to(burger.querySelector('span:nth-child(1)'), { y:0, rotation:0, duration:0.35 });
+  gsap.to(burger.querySelector('span:nth-child(2)'), { opacity:1, duration:0.25 });
+  gsap.to(burger.querySelector('span:nth-child(3)'), { y:0, rotation:0, duration:0.35 });
+  menuOpen = false;
+}
+burger.addEventListener('click', ()=> menuOpen ? closeMenu() : openMenu() );
+menuOverlay.addEventListener('click', (e) => { if(e.target === menuOverlay) closeMenu(); });
+
+/* ---------------- Плавное свечения текста при скролле ---------------- */
+const scrollLines = Array.from(document.querySelectorAll('.scroll-text .line'));
+scrollLines.forEach(line => {
+  const text = line.textContent.trim();
+  line.innerHTML = text.split('').map(ch => ch === ' ' ? `<span class="letter space">&nbsp;</span>` : `<span class="letter">${ch}</span>`).join('');
+});
+
+scrollLines.forEach(line => {
+  const letters = Array.from(line.querySelectorAll('.letter'));
+  gsap.to(letters, {
+    scrollTrigger: {
+      trigger: line,
+      start: "top 90%",
+      end: "bottom 10%",
+      scrub: 2.5,
+    },
+    color: (i, el) => "#fff",
+    scale: (i, el) => 1.05,
+    textShadow: "0 0 15px rgba(255,255,255,0.85)",
+    stagger: {
+      each: 0.05,
+      from: "start"
+    }
+  });
+});
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
