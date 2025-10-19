@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Контакты • Ares Education</title>
+
+<!-- GSAP -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+<style>
+:root{
+  --bg:#05030a;
+  --accent:linear-gradient(90deg,#6ee7ff,#9b7cff,#ff6bd6);
+  --glass:rgba(255,255,255,0.04);
+  --border:rgba(255,255,255,0.08);
+  --font-sans:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;}
+body{
+  font-family:var(--font-sans);
+  background:radial-gradient(circle at 20% 30%,#0c0a1e 0%,transparent 30%),
+             radial-gradient(circle at 80% 70%,#0b1533 0%,transparent 35%),var(--bg);
+  color:#fff;
+  overflow-x:hidden;
+}
+#starfield{position:fixed;inset:0;z-index:0;pointer-events:none;}
+
+header{
+  position:fixed;
+  left:0;right:0;top:0;
+  z-index:50;
+  padding:18px 28px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  backdrop-filter:blur(6px) saturate(1.2);
+  background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));
+  border-bottom:1px solid var(--border);
+}
+.brand{color:#fff;font-weight:700;font-size:20px;text-decoration:none;}
+
+/* --- Кнопка Back --- */
+.back-btn{
+  position:absolute;
+  right:28px;
+  top:18px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid var(--border);
+  color:#fff;
+  padding:10px 18px;
+  border-radius:12px;
+  font-size:15px;
+  font-weight:600;
+  text-decoration:none;
+  transition:all .3s ease;
+  overflow:hidden;
+}
+.back-btn::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:var(--accent);
+  opacity:0;
+  transition:opacity .3s ease;
+  z-index:-1;
+  border-radius:12px;
+}
+.back-btn:hover::before{opacity:1;}
+.back-btn:hover{
+  color:#000;
+  transform:scale(1.05);
+  box-shadow:0 0 20px rgba(155,124,255,0.5);
+}
+
+main{
+  position:relative;
+  z-index:10;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  padding:120px 20px 120px;
+}
+
+h2{
+  font-size:clamp(28px,5vw,50px);
+  font-weight:800;
+  text-align:center;
+  background:var(--accent);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  margin-bottom:40px;
+}
+
+form{
+  width:min(600px,90%);
+  background:var(--glass);
+  border:1px solid var(--border);
+  border-radius:18px;
+  backdrop-filter:blur(10px);
+  padding:40px;
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+  box-shadow:0 20px 80px rgba(0,0,0,0.5);
+}
+
+input,textarea{
+  width:100%;
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:10px;
+  color:#fff;
+  font-size:16px;
+  padding:14px 16px;
+  outline:none;
+  transition:all 0.3s ease;
+}
+input:focus,textarea:focus{
+  border-color:#9b7cff;
+  box-shadow:0 0 15px rgba(155,124,255,0.3);
+}
+textarea{min-height:130px;resize:none;}
+
+button{
+  background:var(--accent);
+  border:none;
+  padding:14px 20px;
+  border-radius:12px;
+  color:#000;
+  font-weight:700;
+  font-size:17px;
+  cursor:pointer;
+  transition:transform 0.3s ease, box-shadow 0.3s ease;
+}
+button:hover{
+  transform:scale(1.03);
+  box-shadow:0 0 25px rgba(155,124,255,0.4);
+}
+
+/* --- Соцсети --- */
+.socials{
+  position: absolute;
+  bottom:30px;
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  justify-content:center;
+  gap:30px;
+  flex-wrap:wrap;
+  z-index:20;
+}
+.socials a{
+  width:70px;
+  height:70px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:50%;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  backdrop-filter:blur(8px);
+  transition:all .4s ease;
+  box-shadow:0 0 0 rgba(255,255,255,0);
+}
+.socials a img{
+  width:36px;height:36px;filter:brightness(0.9);
+  transition:transform .4s ease, filter .4s ease;
+}
+.socials a:hover{
+  transform:scale(1.2) rotate(8deg);
+  box-shadow:0 0 25px rgba(155,124,255,0.6);
+  background:rgba(255,255,255,0.1);
+}
+.socials a:hover img{
+  transform:rotate(360deg) scale(1.1);
+  filter:brightness(1.4);
+}
+
+footer{
+  text-align:center;
+  padding:20px;
+  color:#aaa;
+  font-size:14px;
+  position:relative;
+  z-index:5;
+}
+</style>
+</head>
+
+<body>
+<canvas id="starfield"></canvas>
+
+<header>
+  <a href="index.html" class="brand">Ares Education</a>
+  <a href="index.html" class="back-btn">← Back</a>
+</header>
+
+<main>
+  <h2>Свяжитесь с нами</h2>
+  <form action="https://formspree.io/f/xpwynrbd" method="POST">
+    <input type="text" name="name" placeholder="Имя и фамилия" required />
+    <input type="email" name="email" placeholder="Ваш email" required />
+    <textarea name="message" placeholder="Ваше сообщение..." required></textarea>
+    <button type="submit">Отправить сообщение</button>
+  </form>
+</main>
+
+<!-- 🌐 Соцсети -->
+<div class="socials">
+  <a href="https://www.tiktok.com" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/3046/3046121.png" alt="TikTok"></a>
+  <a href="https://www.youtube.com" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube"></a>
+  <a href="https://www.instagram.com" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/1384/1384063.png" alt="Instagram"></a>
+  <a href="https://x.com" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/5969/5969020.png" alt="X"></a>
+</div>
+
+<footer>© Ares Education Center 2025</footer>
+
+<script>
+/* ---------------- Starfield ---------------- */
+const canvas=document.getElementById('starfield');
+const ctx=canvas.getContext('2d');
+let w=canvas.width=innerWidth,h=canvas.height=innerHeight;
+window.addEventListener('resize',()=>{w=canvas.width=innerWidth;h=canvas.height=innerHeight;initStars();});
+let stars=[];
+function initStars(){
+  stars=[];
+  const count=Math.floor((w+h)/15);
+  for(let i=0;i<count;i++){
+    stars.push({x:Math.random()*w,y:Math.random()*h,z:Math.random()*1.5+0.2,r:Math.random()*1.2+0.2,dx:(Math.random()-0.5)*0.2});
+  }
+}
+function renderStars(){
+  ctx.clearRect(0,0,w,h);
+  for(const s of stars){
+    s.x+=s.dx;
+    if(s.x<0)s.x=w;if(s.x>w)s.x=0;
+    const size=s.r*(1+Math.sin(Date.now()/1000+s.x*0.01)*0.6);
+    ctx.beginPath();
+    ctx.arc(s.x,s.y,size,0,Math.PI*2);
+    ctx.fillStyle='rgba(174,223,255,'+(0.2+s.z*0.4)+')';
+    ctx.fill();
+  }
+  requestAnimationFrame(renderStars);
+}
+initStars();renderStars();
+
+/* --- GSAP появление формы --- */
+gsap.from("form",{y:40,opacity:0,duration:1.2,ease:"power3.out"});
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
